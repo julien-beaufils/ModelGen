@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+<repeated>
+    <imports>    import #{import};
+</imports>
+    <vectors>                new &lt;IUpdate&gt;[]#{hasComma}</vectors>
+    <members>
+        
+        /*
+        * member #{lowerName}
+        */
+        
+        static public const #{constName}:int = #{number};
+        private var #{lowerName}:#{type};
+        
+        public function get#{upperName}():#{type} { return #{lowerName}; }
+        
+        public function set#{upperName}(#{lowerName}:#{type}):void
+        {
+            this.#{lowerName} = #{lowerName};
+            dispatchId = #{constName};
+            dispatch();
+        }</members>
+</repeated>
+<data>
+package #{package}
+{
+    /**
+     * ...
+     * @author Julien BEAUFILS
+    */
+    import com.laDigitale.interfaces.*;
+    import com.laDigitale.UpdateLinker;<imports/>    public class #{class}Data extends UpdateLinker implements ISubject
+    {
+        protected namespace data;
+        
+        public function #{class}Data(control:#{class}) 
+        {
+          
+            super(this);
+            if (control == null || control != this ) throw "invalid control";
+        }
+        
+        /*
+        * ISubject interface
+        */
+       
+        //tmp member id stored before dispatching its change
+        private var dispatchId:int;
+        
+        public function add(addedListeners:Vector.&lt;IUpdate&gt;, types:Vector.&lt;int&gt;):void
+        {
+            for each (var listener:IUpdate in addedListeners)
+            {
+                for each (var id:int in types)
+                {
+                    var listenersVect:Vector.&lt;IUpdate&gt; = listeners[id];
+                    listenersVect[listenersVect.length] = listener;
+                }
+            }
+        }
+        public function remove(addedListeners:Vector.&lt;IUpdate&gt;, types:Vector.&lt;int&gt;):void
+        {
+            for each (var listener:IUpdate in addedListeners)
+            {
+                for each (var id:int in types)
+                {
+                    var listenersVect:Vector.&lt;IUpdate&gt; = listeners[id];
+                    var idx:int = listenersVect.indexOf(listener);
+                    if (idx != -1) listenersVect.splice(idx, 1);
+                }
+            }
+        }
+        
+        private function dispatch():void
+        {
+            var listenersVect:Vector.&lt;IUpdate&gt; = listeners[dispatchId];
+            for each (var listener:IUpdate in listenersVect) listener.update(dispatchId);
+        }
+        
+        
+        public function getEmptyExecutableVector():Vector.&lt;Vector.&lt;IExe&gt;&gt;
+        {
+            return new Vector.&lt;Vector.&lt;IExe&gt;&gt;(#{numMembers}, true);
+        }
+        
+        private var listeners:Vector.&lt;Vector.&lt;IUpdate&gt;&gt; = Vector.&lt;Vector.&lt;IUpdate&gt;&gt;
+        (
+            [<vectors/>            ]
+        )
+        
+        /*
+        * Generated members
+        */<members/>
+    }
+}
+</data>
+<control>
+package #{package}
+{
+    /**
+     * ...
+     * @author Julien BEAUFILS
+     */
+    public class #{class} extends #{class}Data
+    {
+        public function #{class}() 
+        {
+            //TODO controler qui instancie cette classe
+            super(this);
+        }
+    }
+}
+</control>
+
+</data>

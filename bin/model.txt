@@ -1,0 +1,6 @@
+import flash.display.Stage
+class slider::Slider
+pos Number
+size Number
+max Number
+stage Stage
